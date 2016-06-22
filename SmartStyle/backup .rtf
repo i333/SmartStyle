@@ -1,0 +1,97 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green116\blue0;\red170\green13\blue145;\red92\green38\blue153;
+\red46\green13\blue110;\red28\green0\blue207;\red196\green26\blue22;\red63\green110\blue116;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab529
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\f0\fs22 \cf2 \CocoaLigature0 //\
+//  ActivityViewController.swift\
+//  SmartStyle\
+//\
+//  Created by Utku Dora on 02/12/15.\
+//  Copyright \'a9 2015 UDO. All rights reserved.\
+//\
+\cf0 \
+\cf3 import\cf0  UIKit\
+\cf3 import\cf0  CoreMotion\
+\cf3 class\cf0  ActivityViewController: \cf4 UIViewController\cf0  \{\
+\
+    \cf3 @IBOutlet\cf0  \cf3 weak\cf0  \cf3 var\cf0  activityState: \cf4 UILabel\cf0 !\
+    \cf3 @IBOutlet\cf0  \cf3 weak\cf0  \cf3 var\cf0  steps: \cf4 UILabel\cf0 !\
+    \
+    \cf3 var\cf0  days:[\cf4 String\cf0 ] = []\
+    \cf3 var\cf0  stepsTaken:[\cf4 Int\cf0 ] = []\
+    \
+    \cf3 @IBOutlet\cf0  \cf3 weak\cf0  \cf3 var\cf0  stateImageView: \cf4 UIImageView\cf0 !\
+    \cf3 let\cf0  activityManager = \cf4 CMMotionActivityManager\cf0 ()\
+    \cf3 let\cf0  pedoMeter = \cf4 CMPedometer\cf0 ()\
+    \
+    \cf3 override\cf0  \cf3 func\cf0  viewDidLoad() \{\
+        \
+        \cf3 super\cf0 .\cf5 viewDidLoad\cf0 ()\
+        \
+        \cf3 let\cf0  cal = \cf4 NSCalendar\cf0 .\cf5 currentCalendar\cf0 ()\
+       \cf3 let\cf0  date = \cf4 NSDate\cf0 ()\
+        \
+        \cf3 let\cf0  comps = cal.\cf5 components\cf0 ([.Year, .Month, .Day, .Hour, .Minute, .Second], fromDate: date)\
+        \
+        comps.\cf4 hour\cf0  = \cf6 0\cf0 \
+        comps.\cf4 minute\cf0  = \cf6 0\cf0 \
+        comps.\cf4 second\cf0  = \cf6 0\cf0 \
+        \
+        \cf3 let\cf0  midnightOfToday = cal.\cf5 dateFromComponents\cf0 (comps)!\
+        \cf2 //let timeZone = NSTimeZone.systemTimeZone()\
+\cf0         \cf2 //cal.timeZone = timeZone\
+\cf0         \
+        \cf2 // let midnightOfToday = cal.dateFromComponents(comps)!\
+\cf0         \
+        \
+        \cf3 if\cf0 (\cf4 CMMotionActivityManager\cf0 .\cf5 isActivityAvailable\cf0 ())\{\
+            \cf5 print\cf0 (\cf7 "YESS!"\cf0 )\
+            \cf3 self\cf0 .\cf8 activityManager\cf0 .\cf5 startActivityUpdatesToQueue\cf0 (\cf4 NSOperationQueue\cf0 .\cf5 mainQueue\cf0 ()) \{ data \cf3 in\cf0 \
+                \cf3 if\cf0  \cf3 let\cf0  data = data \{\
+                    \cf5 dispatch_async\cf0 (\cf5 dispatch_get_main_queue\cf0 ()) \{\
+                        \cf3 if\cf0 (data.\cf4 stationary\cf0  == \cf3 true\cf0 )\{\
+                            \cf3 self\cf0 .\cf8 activityState\cf0 .\cf4 text\cf0  = \cf7 "Stationary"\cf0 \
+                        \} \cf3 else\cf0  \cf3 if\cf0  (data.\cf4 walking\cf0  == \cf3 true\cf0 )\{\
+                            \cf3 self\cf0 .\cf8 activityState\cf0 .\cf4 text\cf0  = \cf7 "Walking"\cf0 \
+                        \} \cf3 else\cf0  \cf3 if\cf0  (data.\cf4 running\cf0  == \cf3 true\cf0 )\{\
+                            \cf3 self\cf0 .\cf8 activityState\cf0 .\cf4 text\cf0  = \cf7 "Running"\cf0 \
+                        \} \cf3 else\cf0  \cf3 if\cf0  (data.\cf4 automotive\cf0  == \cf3 true\cf0 )\{\
+                            \cf3 self\cf0 .\cf8 activityState\cf0 .\cf4 text\cf0  = \cf7 "Automotive"\cf0 \
+                        \}\
+                    \}\
+                \}\
+            \}\
+        \}\
+        \cf3 if\cf0 (\cf4 CMPedometer\cf0 .\cf5 isStepCountingAvailable\cf0 ())\{\
+            \cf3 let\cf0  fromDate = \cf4 NSDate\cf0 (timeIntervalSinceNow: -\cf6 86400\cf0  * \cf6 7\cf0 )\
+            \cf3 self\cf0 .\cf8 pedoMeter\cf0 .\cf5 queryPedometerDataFromDate\cf0 (fromDate, toDate: \cf4 NSDate\cf0 ()) \{ (data, error) -> \cf4 Void\cf0  \cf3 in\cf0 \
+                \cf5 print\cf0 (data)\
+                \cf5 dispatch_async\cf0 (\cf5 dispatch_get_main_queue\cf0 (), \{ () -> \cf4 Void\cf0  \cf3 in\cf0 \
+                    \cf3 if\cf0 (error == \cf3 nil\cf0 )\{\
+                        \cf3 self\cf0 .\cf8 steps\cf0 .\cf4 text\cf0  = \cf7 "\cf0 \\\cf7 (\cf0 data!.\cf4 numberOfSteps\cf7 )"\cf0 \
+                    \}\
+                \})\
+                \
+            \}\
+            \
+            \cf3 self\cf0 .\cf8 pedoMeter\cf0 .\cf5 startPedometerUpdatesFromDate\cf0 (midnightOfToday) \{ (data: \cf4 CMPedometerData\cf0 ?, error) -> \cf4 Void\cf0  \cf3 in\cf0 \
+                \cf5 dispatch_async\cf0 (\cf5 dispatch_get_main_queue\cf0 (), \{ () -> \cf4 Void\cf0  \cf3 in\cf0 \
+                    \cf3 if\cf0 (error == \cf3 nil\cf0 )\{\
+                        \cf3 self\cf0 .\cf8 steps\cf0 .\cf4 text\cf0  = \cf7 "\cf0 \\\cf7 (\cf0 data!.\cf4 numberOfSteps\cf7 )"\cf0 \
+                    \}\
+                \})\
+            \}\
+        \}\
+    \}\
+    \
+    \cf3 override\cf0  \cf3 func\cf0  didReceiveMemoryWarning() \{\
+        \cf3 super\cf0 .\cf5 didReceiveMemoryWarning\cf0 ()\
+        \
+    \}\
+    \
+    \
+\}}
