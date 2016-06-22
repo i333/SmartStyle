@@ -1,6 +1,6 @@
 # SmartStyle
 
-uzodemi1@binghamton.edu
+uozdemi1@binghamton.edu
 
 This is the mobile side of my Senior Project at Binghamton University. Normally I planned this application to be a compliment to a Smart Bracelet. 
 
